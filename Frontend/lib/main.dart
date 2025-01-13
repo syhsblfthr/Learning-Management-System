@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'register_page.dart'; // Import halaman register
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -16,21 +17,49 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Login Page'),
+      home: const LoginPage(title: 'Login Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void logIn() async {
+    final String email = emailController.text;
+    final String password = passwordController.text;
+
+    Uri uri = Uri.http('192.168.15.133:8000', 'authentication/login');
+    try {
+      debugPrint('[DEBUG] Trying to send a request to log in with username of "$email" and password of "$password"');
+
+      // Buat requestnya
+      http.Request request = http.Request('POST', uri);
+
+      request.bodyFields = {
+        'username': email,
+        'password': password
+      };
+
+      http.StreamedResponse response = await request.send().timeout(Duration(seconds: 10));
+
+      debugPrint('[DEBUG] Response Status Code: ${response.statusCode}');
+    }
+    catch (exc) {
+      debugPrint('[DEBUG] Failed to log in! Exception: $exc');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 20),
 
-                // Title
+                // Judul
                 Text(
                   "Welcome Back!",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -69,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 40),
 
-                // Email Input
+                // Input Email
                 TextField(
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -78,10 +107,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
+                  controller: emailController
                 ),
                 const SizedBox(height: 20),
 
-                // Password Input
+                // Input Password
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
@@ -91,16 +121,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
+                  controller: passwordController
                 ),
                 const SizedBox(height: 20),
 
-                // Login Button
+                // Tombol Login
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      print("Login button pressed");
-                    },
+                    onPressed: logIn,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       shape: RoundedRectangleBorder(
@@ -115,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 10),
 
-                // Forgot Password
+                // Tombol Lupa Password
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -127,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 30),
 
-                // Signup Suggestion
+                // Tombol Pendaftaran
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

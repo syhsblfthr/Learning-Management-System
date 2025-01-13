@@ -10,7 +10,7 @@ class UserFactory extends Factory
     {
         return [
             'username' => fake()->userName(),
-            'password' => 'test_password'
+            'password' => fake()->regexify('[A-Z]{5}[0-4]{3}')
         ];
     }
 }

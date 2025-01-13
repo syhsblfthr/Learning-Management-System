@@ -5,18 +5,17 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class Authentication extends TestCase
+class AuthenticationTest extends TestCase
 {
     public static function credentialsProvider()
     {
         return [
             [
                 'username' => fake()->userName(),
-                'password' => fake()->password(8, 50)
+                'password' => fake()->regexify('[A-Z]{5}[0-4]{3}')
             ]
         ];
     }
-    
 
     #[DataProvider('credentialsProvider')]
     public function test_user_bisa_buat_akun(string $username, string $password)
@@ -28,7 +27,7 @@ class Authentication extends TestCase
 
         $response->assertStatus(201);
     }
-    
+
     #[DataProvider('credentialsProvider')]
     public function test_user_bisa_log_in(string $username, string $password)
     {
