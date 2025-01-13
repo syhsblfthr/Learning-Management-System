@@ -28,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    Uri uri = Uri.http('192.168.15.133:8000', 'authentication/create');
+    Uri uri = Uri.http('10.0.2.2:8000', 'authentication/create');
 
     var request = http.Request('POST', uri);
 

@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
     final String usernameText = _usernameTextController.text;
     final String passwordText = _passwordTextController.text;
 
-    Uri url = Uri.http('192.168.15.133:8000', 'authentication/login');
+    Uri url = Uri.http('10.0.2.2:8000', 'authentication/login');
 
     var request = http.Request('POST', url);
     request.bodyFields = {
