@@ -23,6 +23,7 @@ class Authentication extends Controller {
     {
         $user = User::create([
             'username' => $request['username'],
+            'email' => $request['email'],
             'password' => $request['password']
         ]);
 

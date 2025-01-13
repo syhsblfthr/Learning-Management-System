@@ -12,7 +12,8 @@ class AuthenticationTest extends TestCase
         return [
             [
                 'username' => fake()->userName(),
-                'password' => fake()->regexify('[A-Z]{5}[0-4]{3}')
+                'email' => fake()->safeEmail(),
+                'password' => fake()->regexify('[A-Z]{5}[0-4]{3}'),
             ]
         ];
     }
@@ -22,7 +23,8 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->postJson('/authentication/create', [
             'username' => $username,
-            'password' => $password
+            'email' => $email,
+            'password' => $password,
         ]);
 
         $response->assertStatus(201);
@@ -33,7 +35,8 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->postJson('/authentication/login', [
             'username' => $username,
-            'password' => $password
+            'email' => $email,
+            'password' => $password,
         ]);
 
         $response->assertStatus(201);
