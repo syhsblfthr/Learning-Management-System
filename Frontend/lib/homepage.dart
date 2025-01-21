@@ -1,65 +1,64 @@
 import 'package:flutter/material.dart';
-import 'profile_list_screen.dart'; // Import halaman ProfileListScreen
+import 'profile_page.dart'; // Import halaman ProfilePage
 
-class Homepage extends StatelessWidget {
-  const Homepage({super.key});
+class Homepage extends StatefulWidget {
+  final int userId; // ID pengguna untuk halaman profil
+  const Homepage({super.key, required this.userId});
+
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  int _selectedIndex = 0; // Index awal untuk Bottom Navigation
+
+  // Daftar halaman untuk navigasi
+  final List<Widget> _pages = [
+    Center(child: Text('Home Content', style: TextStyle(fontSize: 24))),
+    Center(child: Text('Search Content', style: TextStyle(fontSize: 24))),
+    Center(child: Text('Notifications Content', style: TextStyle(fontSize: 24))),
+    ProfilePage(userId: 1), // Halaman Profile
+  ];
+
+  // Fungsi untuk mengubah halaman saat tombol bottom navigation ditekan
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.account_circle_outlined,
-              size: 100,
-              color: Colors.blueAccent,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Welcome to the App!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Manage your profiles with ease.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                // Navigasi ke halaman ProfileListScreen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileListScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Go to Profile List',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ],
-        ),
+      body: _pages[_selectedIndex], // Tampilkan halaman sesuai index
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed, // Jenis navigasi
+        currentIndex: _selectedIndex, // Index saat ini
+        onTap: _onItemTapped, // Fungsi untuk mengubah halaman
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_outlined),
+            activeIcon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_outlined),
+            activeIcon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            activeIcon: Icon(Icons.account_circle),
+            label: 'Profile',
+          ),
+        ],
+        selectedItemColor: Colors.blueAccent, // Warna ikon yang dipilih
+        unselectedItemColor: Colors.grey, // Warna ikon yang tidak dipilih
       ),
     );
   }

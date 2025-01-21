@@ -9,11 +9,10 @@ class Profile extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
-        'name',
+        'username',
         'email',
-        'bio'
+        'nomor_induk_sekolah',
+        'kota',
     ];
 }

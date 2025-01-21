@@ -9,17 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->text('bio')->nullable();
+            $table->string('nomor_induk_sekolah')->unique();
+            $table->string('kota');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
