@@ -4,36 +4,54 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
     // Ambil data profil
     public function show($id)
     {
-        $profile = Profile::findOrFail($id);
+        Log::info("ProfileController::show dipanggil!");
+
+        $profile = Profile::find($id);
+
+        if (is_null($profile)) {
+            $profile = new Profile();
+            $user = User::find($id);
+
+            $profile->username = $user->username;
+            $profile->email = $user->email;
+
+            $profile->save();
+        }
+
         return response()->json($profile);
     }
 
     // Update data profil
     public function update(Request $request, $id)
     {
-        $profile = Profile::find($id);
-
+        // Pastikan bahwa $request berdasarkan format yang benar
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:profiles,username,' . $id,
-            'email' => 'required|email|unique:profiles,email,' . $id,
-            'nomor_induk_sekolah' => 'required|string|unique:profiles,nomor_induk_sekolah,' . $id,
-            'kota' => 'required|string',
+            'username' => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'nomor_induk_sekolah' => ['required', 'numeric'],
+            'kota' => ['required', 'string'],
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if ($validator->stopOnFirstFailure()->fails()) {
+            return response('Bad Request', 400);
         }
 
-        if ($profile == null) {
-            $profile = new Profile();
+        // Pastikan bahwa profile sudah ada
+        $profile = Profile::find($id);
+
+        if (is_null($profile)) {
+            return response('Profil tidak ditemukan', 500);
         }
 
         $profile->username = $request->username;
@@ -42,6 +60,7 @@ class ProfileController extends Controller
         $profile->kota = $request->kota;
 
         $profile->save();
+
         return response()->json($profile);
     }
 }

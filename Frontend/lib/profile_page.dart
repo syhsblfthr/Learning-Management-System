@@ -36,7 +36,9 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           usernameController.text = profile['username'];
           emailController.text = profile['email'];
+          debugPrint('Hi');
           nisController.text = profile['nomor_induk_sekolah'];
+          debugPrint('Hello');
           kotaController.text = profile['kota'];
         });
       } else {

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -28,6 +29,9 @@ class ProfileService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
+	  
+	  debugPrint('Dapat kode status: ${response.statusCode}');
+	  
       return response.statusCode == 200;
     } catch (e) {
       throw Exception('Failed to update profile: $e');

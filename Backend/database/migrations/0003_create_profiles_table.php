@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->string('nomor_induk_sekolah')->unique();
-            $table->string('kota');
+            $table->string('nomor_induk_sekolah')->unique()->default('');
+            $table->string('kota')->default('');
             $table->timestamps();
         });
     }
