@@ -19,7 +19,7 @@ class ProfileController extends Controller
     // Update data profil
     public function update(Request $request, $id)
     {
-        $profile = Profile::findOrFail($id);
+        $profile = Profile::find($id);
 
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|unique:profiles,username,' . $id,
@@ -32,7 +32,16 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $profile->update($request->only('username', 'email', 'nomor_induk_sekolah', 'kota'));
+        if ($profile == null) {
+            $profile = new Profile();
+        }
+
+        $profile->username = $request->username;
+        $profile->email = $request->email;
+        $profile->nomor_induk_sekolah = $request->nomor_induk_sekolah;
+        $profile->kota = $request->kota;
+
+        $profile->save();
         return response()->json($profile);
     }
 }
