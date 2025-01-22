@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\Log;
 class Authentication extends Controller {
     public function login(Request $request)
     {
+        Log::info('username: ' . $request['username']);
+        Log::info('password: ' . $request['password']);
         $user = User::where('username', $request['username'])->where('password', $request['password'])->first();
 
         if ($user) {
-            return response('Berhasil login!', 201);
+            return response(json_encode(['id' => $user['id']]), 201);
         }
 
         return response('Gagal login!', 401);

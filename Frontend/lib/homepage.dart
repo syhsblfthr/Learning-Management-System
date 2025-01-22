@@ -13,12 +13,17 @@ class _HomepageState extends State<Homepage> {
   int _selectedIndex = 0; // Index awal untuk Bottom Navigation
 
   // Daftar halaman untuk navigasi
-  final List<Widget> _pages = [
-    Center(child: Text('Home Content', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Search Content', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Notifications Content', style: TextStyle(fontSize: 24))),
-    ProfilePage(userId: 1), // Halaman Profile
-  ];
+  List<Widget> _pages = [];
+
+  @override
+  void initState() {
+    _pages = [
+      Center(child: Text('Home Content', style: TextStyle(fontSize: 24))),
+      Center(child: Text('Search Content', style: TextStyle(fontSize: 24))),
+      Center(child: Text('Notifications Content', style: TextStyle(fontSize: 24))),
+      ProfilePage(userId: widget.userId), // Halaman Profile
+    ];
+  }
 
   // Fungsi untuk mengubah halaman saat tombol bottom navigation ditekan
   void _onItemTapped(int index) {

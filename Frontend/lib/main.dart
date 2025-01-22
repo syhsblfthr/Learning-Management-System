@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
 import 'homepage.dart'; // Import halaman Homepage
 import 'register_page.dart'; // Import halaman RegisterPage
+import 'networking.dart' as networking;
+import 'package:localstorage/localstorage.dart' show initLocalStorage;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+  
   runApp(const MyApp());
 }
 
@@ -38,35 +46,50 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordTextController = TextEditingController();
   bool _isLoading = false;
 
-  void logIn(BuildContext context) async {
+  void _toggleLoading() {
+    setState(() => _isLoading ^= true);
+  }
+
+  void _showError(String message) {
+    final Text textMessage = Text(message);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: textMessage),
+    );
+  }
+
+  void _logIn(BuildContext context) async {
     final String username = _usernameTextController.text.trim();
     final String password = _passwordTextController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Username and password are required')),
-      );
+      _showError('Username and password are required');
+      
       return;
     }
 
-    setState(() {
-      _isLoading = true;
+    _toggleLoading();
+
+    final response = await networking.post('/authentication/login', {
+      'username': username,
+      'password': password,
     });
 
-    // Simulasikan autentikasi
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Simulasi login berhasil dengan userId = 1
+    if (response.statusCode == 201) {
+      final responseBody = jsonDecode(response.body);
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => Homepage(userId: 1), // Kirim userId ke Homepage
+          builder: (ctx) => Homepage(userId: responseBody['id']),
         ),
       );
-    });
+    }
+    else {
+      _showError('Failed to log in with response\'s status code: ${response.statusCode}');
+    }
+
+    _toggleLoading();
   }
 
   @override
@@ -129,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : () => logIn(context),
+                    onPressed: _isLoading ? null : () => _logIn(context),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       shape: RoundedRectangleBorder(

@@ -3,7 +3,7 @@ import 'profile_service.dart';
 
 class ProfilePage extends StatefulWidget {
   final int userId; // ID user untuk fetch data profil
-  const ProfilePage({Key? key, required this.userId}) : super(key: key);
+  const ProfilePage({super.key, required this.userId});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -37,9 +37,9 @@ class _ProfilePageState extends State<ProfilePage> {
           usernameController.text = profile['username'];
           emailController.text = profile['email'];
           debugPrint('Hi');
-          nisController.text = profile['nomor_induk_sekolah'];
+          nisController.text = profile['nomor_induk_sekolah'] ?? '';
           debugPrint('Hello');
-          kotaController.text = profile['kota'];
+          kotaController.text = profile['kota'] ?? '';
         });
       } else {
         _showSnackbar('Failed to fetch profile data');

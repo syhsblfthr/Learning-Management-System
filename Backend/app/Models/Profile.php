@@ -9,6 +9,8 @@ class Profile extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'username',
         'email',

@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
-            $table->string('email')->unique();
-            $table->string('nomor_induk_sekolah')->unique()->default('');
-            $table->string('kota')->default('');
-            $table->timestamps();
+            $table->integer('nisn')->unique();
         });
     }
 
