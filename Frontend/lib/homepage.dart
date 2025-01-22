@@ -17,6 +17,8 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
+    super.initState();
+    
     _pages = [
       Center(child: Text('Home Content', style: TextStyle(fontSize: 24))),
       Center(child: Text('Search Content', style: TextStyle(fontSize: 24))),
