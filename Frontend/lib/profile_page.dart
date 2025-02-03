@@ -155,12 +155,24 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Agama
                     DropdownButtonFormField<String>(
                       items: [
-                        DropdownMenuItem(child: const Text("Islam")),
-                        DropdownMenuItem(child: const Text("Kristen")),
-                        DropdownMenuItem(child: const Text("Buddha")),
-                        DropdownMenuItem(child: const Text("Hindu")),
+                        DropdownMenuItem(
+                          value: "Islam",
+                          child: const Text("Islam")
+                        ),
+                        DropdownMenuItem(
+                          value: "Kristen",
+                          child: const Text("Kristen")
+                        ),
+                        DropdownMenuItem(
+                          value: "Buddha",
+                          child: const Text("Buddha")
+                        ),
+                        DropdownMenuItem(
+                          value: "Hindu",
+                          child: const Text("Hindu")
+                        ),
                       ],
-                      value: "Pilih",
+                      value: "Islam",
                       onChanged: (String? value) { },
                       decoration:
                           const InputDecoration(labelText: 'Agama'),
