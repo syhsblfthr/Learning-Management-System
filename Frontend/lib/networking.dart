@@ -8,7 +8,7 @@ final _baseURI = 'http://10.0.2.2:8000';
 
 http.Response _saveSession(final http.Response response) {
   debugPrint('[DEBUG] Headers yang ada: ${response.headersSplitValues}');
-  
+
   var setCookieHeaders = response.headersSplitValues['set-cookie'];
 
   if (setCookieHeaders == null) {
@@ -17,7 +17,7 @@ http.Response _saveSession(final http.Response response) {
 
   List<String> sessionCookies = [];
   for (final header in setCookieHeaders) {
-    sessionCookies.add(header);
+    sessionCookies.add(header.split(';')[0]);
   }
 
   localStorage.setItem('session-cookies', jsonEncode(sessionCookies));
@@ -34,8 +34,10 @@ Map<String, String>? _getSession() {
 
   final sessionCookiesList = jsonDecode(sessionCookiesEncoded);
 
+  debugPrint('HII: ${sessionCookiesList.join(';')}');
+
   return {
-    'set-cookie': sessionCookiesList.join(','),
+    'cookie': sessionCookiesList.join(';'),
   };
 }
 

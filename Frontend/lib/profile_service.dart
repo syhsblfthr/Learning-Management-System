@@ -30,7 +30,7 @@ class ProfileService {
         body: jsonEncode(data),
       );
 	  
-	  debugPrint('Dapat kode status: ${response.statusCode}');
+      debugPrint('Dapat kode status: ${response.statusCode}');
 	  
       return response.statusCode == 200;
     } catch (e) {

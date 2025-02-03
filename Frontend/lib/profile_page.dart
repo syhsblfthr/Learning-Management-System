@@ -17,9 +17,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Controller untuk form input
   TextEditingController usernameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController nisController = TextEditingController();
-  TextEditingController kotaController = TextEditingController();
+  TextEditingController emailController    = TextEditingController();
+  TextEditingController nisController      = TextEditingController();
+  TextEditingController kotaController     = TextEditingController();
 
   @override
   void initState() {
@@ -95,9 +95,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    // Nama
                     TextFormField(
                       controller: usernameController,
-                      decoration: const InputDecoration(labelText: 'Username'),
+                      decoration: const InputDecoration(labelText: 'Nama'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Username cannot be empty';
@@ -105,32 +106,39 @@ class _ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
+
                     const SizedBox(height: 16),
+
+                    // Tempat Lahir
                     TextFormField(
                       controller: emailController,
-                      decoration: const InputDecoration(labelText: 'Email'),
+                      decoration: const InputDecoration(labelText: 'Tempat Lahir'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Email cannot be empty';
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                          return 'Invalid email format';
+                          return 'Mohon diisi.';
                         }
                         return null;
                       },
                     ),
+
                     const SizedBox(height: 16),
+
+                    // Tanggal Lahir
                     TextFormField(
                       controller: nisController,
                       decoration:
-                          const InputDecoration(labelText: 'Nomor Induk Sekolah (NIS)'),
+                          const InputDecoration(labelText: 'Tanggal Lahir'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'NIS cannot be empty';
+                          return 'Mohon diisi.';
                         }
                         return null;
                       },
                     ),
+
                     const SizedBox(height: 16),
+
+                    // Jenis Kelamin
                     TextFormField(
                       controller: kotaController,
                       decoration: const InputDecoration(labelText: 'Kota'),
@@ -141,10 +149,27 @@ class _ProfilePageState extends State<ProfilePage> {
                         return null;
                       },
                     ),
+
                     const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: _updateProfile,
-                      child: const Text('Update Profile'),
+
+                    // Agama
+                    DropdownButtonFormField<String>(
+                      items: [
+                        DropdownMenuItem(child: const Text("Islam")),
+                        DropdownMenuItem(child: const Text("Kristen")),
+                        DropdownMenuItem(child: const Text("Buddha")),
+                        DropdownMenuItem(child: const Text("Hindu")),
+                      ],
+                      value: "Pilih",
+                      onChanged: (String? value) { },
+                      decoration:
+                          const InputDecoration(labelText: 'Agama'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Mohon diisi.';
+                        }
+                        return null;
+                      },
                     ),
                   ],
                 ),

@@ -10,7 +10,7 @@ import 'package:localstorage/localstorage.dart' show initLocalStorage;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLocalStorage();
-  
+
   runApp(const MyApp());
 }
 
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showError(String message) {
     final Text textMessage = Text(message);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: textMessage),
     );
@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (username.isEmpty || password.isEmpty) {
       _showError('Username and password are required');
-      
+
       return;
     }
 
@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 201) {
       final responseBody = jsonDecode(response.body);
-      
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

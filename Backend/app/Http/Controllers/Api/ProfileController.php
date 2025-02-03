@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class ProfileController extends Controller
 {
     // Ambil data profil
-    public function show($id)
+    public function show(Request $request, $id)
     {
         Log::info("ProfileController::show dipanggil!");
 
