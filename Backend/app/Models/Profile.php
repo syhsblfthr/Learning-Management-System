@@ -12,9 +12,31 @@ class Profile extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'username',
+        'nama',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'suku',
+        'Nomor_KTP',
+        'NPWP',
+        'Kewarganegaraan',
+        'alamat',
+        'RT',
+        'RW',
+        'Provinsi',
+        'Kota',
+        'Kecamatan',
+        'Kelurahan',
+        'Dusun',
+        'kode_pos',
+        'jenis_tinggal',
+        'telpon_rumah',
+        'telpon_seluler',
+        'alamat_kos',
+        'kota_kos',
+        'alat_transportasi',
         'email',
-        'nomor_induk_sekolah',
-        'kota',
+        'email_WBI'
     ];
 }
