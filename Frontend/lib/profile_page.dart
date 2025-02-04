@@ -1,192 +1,236 @@
 import 'package:flutter/material.dart';
-import 'profile_service.dart';
 
 class ProfilePage extends StatefulWidget {
-  final int userId; // ID user untuk fetch data profil
-  const ProfilePage({super.key, required this.userId});
-
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  final ProfileService _profileService = ProfileService();
-
-  bool _isLoading = false;
-
-  // Controller untuk form input
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController emailController    = TextEditingController();
-  TextEditingController nisController      = TextEditingController();
-  TextEditingController kotaController     = TextEditingController();
+  final TextEditingController _tanggalLahirController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _fetchProfile(); // Ambil data profil saat halaman diinisialisasi
-  }
-
-  // Fungsi untuk mengambil data profil
-  Future<void> _fetchProfile() async {
-    setState(() => _isLoading = true);
-    try {
-      final profile = await _profileService.fetchProfile(widget.userId);
-      if (profile != null) {
-        setState(() {
-          usernameController.text = profile['username'];
-          emailController.text = profile['email'];
-          debugPrint('Hi');
-          nisController.text = profile['nomor_induk_sekolah'] ?? '';
-          debugPrint('Hello');
-          kotaController.text = profile['kota'] ?? '';
-        });
-      } else {
-        _showSnackbar('Failed to fetch profile data');
-      }
-    } catch (e) {
-      _showSnackbar('Error: $e');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  // Fungsi untuk mengupdate data profil
-  Future<void> _updateProfile() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-    try {
-      final isSuccess = await _profileService.updateProfile(widget.userId, {
-        'username': usernameController.text,
-        'email': emailController.text,
-        'nomor_induk_sekolah': nisController.text,
-        'kota': kotaController.text,
-      });
-
-      if (isSuccess) {
-        _showSnackbar('Profile updated successfully');
-      } else {
-        _showSnackbar('Failed to update profile');
-      }
-    } catch (e) {
-      _showSnackbar('Error: $e');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  // Fungsi untuk menampilkan snackbar
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  void dispose() {
+    _tanggalLahirController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: const Text('learning management system'),
+        backgroundColor: Colors.grey,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Nama
-                    TextFormField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(labelText: 'Nama'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Username cannot be empty';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Tempat Lahir
-                    TextFormField(
-                      controller: emailController,
-                      decoration: const InputDecoration(labelText: 'Tempat Lahir'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Mohon diisi.';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Tanggal Lahir
-                    TextFormField(
-                      controller: nisController,
-                      decoration:
-                          const InputDecoration(labelText: 'Tanggal Lahir'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Mohon diisi.';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Jenis Kelamin
-                    TextFormField(
-                      controller: kotaController,
-                      decoration: const InputDecoration(labelText: 'Kota'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'City cannot be empty';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Agama
-                    DropdownButtonFormField<String>(
-                      items: [
-                        DropdownMenuItem(
-                          value: "Islam",
-                          child: const Text("Islam")
-                        ),
-                        DropdownMenuItem(
-                          value: "Kristen",
-                          child: const Text("Kristen")
-                        ),
-                        DropdownMenuItem(
-                          value: "Buddha",
-                          child: const Text("Buddha")
-                        ),
-                        DropdownMenuItem(
-                          value: "Hindu",
-                          child: const Text("Hindu")
-                        ),
-                      ],
-                      value: "Islam",
-                      onChanged: (String? value) { },
-                      decoration:
-                          const InputDecoration(labelText: 'Agama'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Mohon diisi.';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            _buildInputField('Nama', 'Masukkan Nama Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Tempat Lahir', 'Masukkan Tempat Lahir Anda'),
+            const SizedBox(height: 16),
+            _buildDatePickerField(
+                'Tanggal Lahir', 'DD-MM-YYYY', _tanggalLahirController),
+            const SizedBox(height: 16),
+            _buildDropdownField(
+              title: 'Jenis Kelamin',
+              options: ['Laki-laki', 'Perempuan'],
+            ),
+            const SizedBox(height: 16),
+            _buildDropdownField(
+              title: 'Agama',
+              options: ['Islam', 'Kristen', 'Hindu', 'Budha', 'Lainnya'],
+            ),
+            const SizedBox(height: 16),
+            _buildInputField('Suku', 'Masukkan Suku Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Nomor KTP', 'Masukkan Nomor KTP'),
+            const SizedBox(height: 16),
+            _buildInputField('NPWP', 'Masukkan NPWP'),
+            const SizedBox(height: 16),
+            _buildDropdownField(
+              title: 'Kewarganegaraan',
+              options: ['Indonesia', 'WNA'],
+            ),
+            const SizedBox(height: 16),
+            _buildInputField('Alamat', 'Masukkan Alamat Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('RT', 'Masukkan RT'),
+            const SizedBox(height: 16),
+            _buildInputField('RW', 'Masukkan RW'),
+            const SizedBox(height: 16),
+            _buildInputField('Propinsi', 'Masukkan Propinsi Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Kabupaten/Kota', 'Masukkan Kabupaten/Kota Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Kecamatan', 'Masukkan Kecamatan Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Kelurahan', 'Masukkan Kelurahan Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Dusun', 'Masukkan Dusun Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Kode Pos', 'Masukkan Kode Pos Anda'),
+            const SizedBox(height: 16),
+            _buildDropdownField(
+              title: 'Jenis Tinggal',
+              options: ['Bersama Orang Tua', 'Kos', 'Rumah Pribadi'],
+            ),
+            const SizedBox(height: 16),
+            _buildInputField('Telepon Rumah', 'Masukkan Telepon Rumah'),
+            const SizedBox(height: 16),
+            _buildInputField('Telepon Seluler', 'Masukkan Telepon Seluler'),
+            const SizedBox(height: 16),
+            _buildInputField('Alamat Kos', 'Masukkan Alamat Kos Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Kabupaten/Kota Kos',
+                'Masukkan Kabupaten/Kota Kos Anda'),
+            const SizedBox(height: 16),
+            _buildDropdownField(
+              title: 'Alat Transportasi',
+              options: ['Jalan Kaki', 'Motor', 'Mobil', 'Angkutan Umum'],
+            ),
+            const SizedBox(height: 16),
+            _buildInputField(
+                'Email (Pribadi)', 'Masukkan Email Pribadi Anda'),
+            const SizedBox(height: 16),
+            _buildInputField('Email WBI', 'Masukkan Email WBI Anda'),
+            const SizedBox(height: 32),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Tambahkan logika untuk menyimpan data
+                  print('Tanggal Lahir: ${_tanggalLahirController.text}');
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Simpan',
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField(String title, String placeholder) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          decoration: InputDecoration(
+            hintText: placeholder,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDatePickerField(
+      String title, String placeholder, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          readOnly: true,
+          onTap: () => _selectDate(controller),
+          decoration: InputDecoration(
+            hintText: placeholder,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _selectDate(TextEditingController controller) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      helpText: 'Pilih Tanggal Lahir',
+      cancelText: 'Batal',
+      confirmText: 'OK',
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        controller.text =
+            '${selectedDate.day.toString().padLeft(2, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.year}';
+      });
+    }
+  }
+
+  Widget _buildDropdownField(
+      {required String title, required List<String> options}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          items: options
+              .map(
+                (option) => DropdownMenuItem(
+                  value: option,
+                  child: Text(option),
+                ),
+              )
+              .toList(),
+          onChanged: (value) {},
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          ),
+        ),
+      ],
     );
   }
 }
