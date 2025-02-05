@@ -49,14 +49,14 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     if (response != null && response.statusCode == 201) {
+      if (context.mounted) {
+        Navigator.pop(context); // Kembali ke halaman login
+      }
+      
       debugPrint('[DEBUG] Berhasil membuat akun!');
     }
     else {
       debugPrint('[DEBUG] Gagal membuat akun!');
-    }
-
-    if (context.mounted) {
-      Navigator.pop(context); // Kembali ke halaman login
     }
   }
 

@@ -36,13 +36,23 @@ class Authentication extends Controller {
 
     public function create(Request $request)
     {
-        $user = User::create([
-            'username' => $request['username'],
-            'email' => $request['email'],
-            'password' => $request['password']
+        $request->validate([
+            'username' => ['required'],
+            'email'    => ['required'],
+            'password' => ['required']
         ]);
 
-        if ($user) {
+        $profile = new Profile;
+        $profile->nama = $request['username'];
+        $profile->save();
+
+        $user = new User;
+        $user->email = $request['email'];
+        $user->password = $request['password'];
+        $user->profile_id = $profile['id'];
+        $user->save();
+
+        if (!is_null($user)) {
             return response('Berhasil membuat akun!', 201);
         }
 
