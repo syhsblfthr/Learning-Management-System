@@ -101,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ElevatedButton(
                 onPressed: () {
                   // Tambahkan logika untuk menyimpan data
-                  print('Tanggal Lahir: ${_tanggalLahirController.text}');
+                  debugPrint('Tanggal Lahir: ${_tanggalLahirController.text}');
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
