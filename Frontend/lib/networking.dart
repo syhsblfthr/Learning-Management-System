@@ -7,7 +7,7 @@ import 'package:localstorage/localstorage.dart';
 final _baseURI = 'http://10.0.2.2:8000';
 
 http.Response _saveSession(final http.Response response) {
-  debugPrint('[DEBUG] Headers yang ada: ${response.headersSplitValues}');
+  debugPrint('[DEBUG] Kode status: ${response.statusCode}');
 
   var setCookieHeaders = response.headersSplitValues['set-cookie'];
 

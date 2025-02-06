@@ -37,40 +37,43 @@ class ProfileController extends Controller
     {
         // Pastikan bahwa $request berdasarkan format yang benar
         $validator = Validator::make($request->all(), [
-            'nama' => ['required', 'string'],
-            'tempat_lahir' => ['required', 'string'],
-            'tanggal_lahir' => ['required', 'date'],
-            'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
-            'agama' => ['required', 'in:Islam,Kristen,Katolik,Hindu,Budha,Konghucu,Lainnya'],
-            'suku' => ['required', 'string'],
-            'Nomor_KTP' => ['required', 'string'],
-            'NPWP' => ['nullable', 'string'],
-            'Kewarganegaraan' => ['required', 'string'],
-            'alamat' => ['required', 'string'],
-            'RT' => ['required', 'string'],
-            'RW' => ['required', 'string'],
-            'Provinsi' => ['required', 'string'],
-            'Kota' => ['required', 'string'],
-            'Kecamatan' => ['required', 'string'],
-            'Kelurahan' => ['required', 'string'],
-            'Dusun' => ['nullable', 'string'],
-            'kode_pos' => ['required', 'string'],
-            'jenis_tinggal' => ['required', 'in:Sendiri,bersama Orang Tua,Sewa,Lainnya'],
-            'telpon_rumah' => ['nullable', 'string'],
-            'telpon_seluler' => ['required', 'string'],
-            'alamat_kos' => ['nullable', 'string'],
-            'kota_kos' => ['nullable', 'string'],
-            'alat_transportasi' => ['required', 'in:Jalan Kaki,Kendaraan Pribadi,Kendaraan Umum,Lainnya'],
-            'email' => ['required', 'email'],
-            'email_WBI' => ['nullable', 'email'],
+            'nama'              => ['required', 'string'],
+            'tempat_lahir'      => ['nullable', 'string'],
+            'tanggal_lahir'     => ['nullable', 'date'],
+            'jenis_kelamin'     => ['nullable', 'in:Laki-laki,Perempuan'],
+            'agama'             => ['nullable', 'in:Islam,Kristen,Katolik,Hindu,Budha,Konghucu,Lainnya'],
+            'suku'              => ['nullable', 'string'],
+            'Nomor_KTP'         => ['nullable', 'string'],
+            'NPWP'              => ['nullable', 'string'],
+            'Kewarganegaraan'   => ['nullable', 'string'],
+            'alamat'            => ['nullable', 'string'],
+            'RT'                => ['nullable', 'string'],
+            'RW'                => ['nullable', 'string'],
+            'Provinsi'          => ['nullable', 'string'],
+            'Kota'              => ['nullable', 'string'],
+            'Kecamatan'         => ['nullable', 'string'],
+            'Kelurahan'         => ['nullable', 'string'],
+            'Dusun'             => ['nullable', 'string'],
+            'kode_pos'          => ['nullable', 'string'],
+            'jenis_tinggal'     => ['nullable', 'in:Sendiri,bersama Orang Tua,Sewa,Lainnya'],
+            'telpon_rumah'      => ['nullable', 'string'],
+            'telpon_seluler'    => ['nullable', 'string'],
+            'alamat_kos'        => ['nullable', 'string'],
+            'kota_kos'          => ['nullable', 'string'],
+            'alat_transportasi' => ['nullable', 'string', 'in:Jalan Kaki,Kendaraan Pribadi,Kendaraan Umum,Lainnya'],
+            'email'             => ['nullable', 'email'],
+            'email_WBI'         => ['nullable', 'email'],
         ]);
 
         if ($validator->stopOnFirstFailure()->fails()) {
+            Log::error("Validation failed!");
             return response('Bad Request', 400);
         }
 
         // Pastikan bahwa profile sudah ada
         $profile = Profile::find($id);
+        Log::info($profile);
+        Log::info(is_null($profile));
 
         if (is_null($profile)) {
             return response('Profil tidak ditemukan', 500);

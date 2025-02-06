@@ -6,11 +6,14 @@ class Homepage extends StatefulWidget {
   const Homepage({super.key, required this.userId});
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  State<Homepage> createState() => _HomepageState(userId: userId);
 }
 
 class _HomepageState extends State<Homepage> {
   int _selectedIndex = 0; // Index awal untuk Bottom Navigation
+  final int userId;
+
+  _HomepageState({ required this.userId });
 
   // Daftar halaman untuk navigasi
   List<Widget> _pages = [];
@@ -23,7 +26,7 @@ class _HomepageState extends State<Homepage> {
       Center(child: Text('Home Content', style: TextStyle(fontSize: 24))),
       Center(child: Text('Search Content', style: TextStyle(fontSize: 24))),
       Center(child: Text('Notifications Content', style: TextStyle(fontSize: 24))),
-      ProfilePage(), // Halaman Profile
+      ProfilePage(key: UniqueKey(), userId: userId), // Halaman Profile
     ];
   }
 

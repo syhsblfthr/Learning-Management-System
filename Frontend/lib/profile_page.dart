@@ -1,18 +1,23 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import './networking.dart' as httpWrapper;
 
 class ProfilePage extends StatefulWidget {
+  final int userId;
+
+  const ProfilePage({ required super.key, required this.userId });
+  
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState(userId: userId);
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final TextEditingController _tanggalLahirController = TextEditingController();
+  final int userId;
 
-  @override
-  void dispose() {
-    _tanggalLahirController.dispose();
-    super.dispose();
-  }
+  _ProfilePageState({ required this.userId });
+
+  final Map<String, TextEditingController> _textControllers = {};
+  TextEditingController tes = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _buildInputField('Tempat Lahir', 'Masukkan Tempat Lahir Anda'),
             const SizedBox(height: 16),
             _buildDatePickerField(
-                'Tanggal Lahir', 'DD-MM-YYYY', _tanggalLahirController),
+                'Tanggal Lahir', tes),
             const SizedBox(height: 16),
             _buildDropdownField(
               title: 'Jenis Kelamin',
@@ -89,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 16),
             _buildDropdownField(
               title: 'Alat Transportasi',
-              options: ['Jalan Kaki', 'Motor', 'Mobil', 'Angkutan Umum'],
+              options: ['Jalan Kaki', 'Kendaraan Pribadi', 'Kendaraan Umum', 'Lainnya'],
             ),
             const SizedBox(height: 16),
             _buildInputField(
@@ -100,8 +105,16 @@ class _ProfilePageState extends State<ProfilePage> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Tambahkan logika untuk menyimpan data
-                  debugPrint('Tanggal Lahir: ${_tanggalLahirController.text}');
+                  final Map<String, String> map = {};
+
+                  for (final MapEntry(:key, value: controller) in _textControllers.entries) {
+                    map[key.toLowerCase()] = controller.text;
+                  }
+
+                  debugPrint("Request: ${map.toString()}");
+                  debugPrint("UserID: $userId");
+
+                  httpWrapper.put('/api/profile/$userId', map);
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
@@ -125,33 +138,29 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildInputField(String title, String placeholder) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          decoration: InputDecoration(
-            hintText: placeholder,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          ),
-        ),
-      ],
-    );
-  }
+    // Buat controller untuk input field ini dan letakkan ke dalam textControllers
+    TextEditingController? controller;
 
-  Widget _buildDatePickerField(
-      String title, String placeholder, TextEditingController controller) {
+    if (_textControllers.containsKey(title)) {
+      controller = _textControllers[title];
+    }
+    else {
+      _textControllers[title] = controller = TextEditingController();
+    }
+
+    InputDecoration makeDecoration(String placeholder) {
+      return InputDecoration(
+        hintText: placeholder,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -165,18 +174,40 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 8),
         TextField(
           controller: controller,
-          readOnly: true,
-          onTap: () => _selectDate(controller),
-          decoration: InputDecoration(
-            hintText: placeholder,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          ),
+          decoration: makeDecoration(placeholder),
         ),
       ],
+    );
+  }
+
+  Widget _buildDatePickerField(String label, TextEditingController controller) {
+    // Buat controller untuk input field ini dan letakkan ke dalam textControllers
+    TextEditingController? controller;
+
+    if (_textControllers.containsKey(label)) {
+      controller = _textControllers[label];
+    }
+    else {
+      _textControllers[label] = controller = TextEditingController();
+    }
+    
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      readOnly: true,
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        if (pickedDate != null) {
+          setState(() {
+            controller!.text = "${pickedDate.toLocal()}".split(' ')[0]; // Format as YYYY-MM-DD
+          });
+        }
+      },
     );
   }
 
@@ -191,37 +222,63 @@ class _ProfilePageState extends State<ProfilePage> {
       confirmText: 'OK',
     );
 
+    debugPrint('Selected date: ${selectedDate.toString()}');
+
     if (selectedDate != null) {
       setState(() {
-        controller.text =
-            '${selectedDate.day.toString().padLeft(2, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.year}';
+        // controller.text =
+        //     '${selectedDate.day.toString().padLeft(2, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.year}';
+        controller.text = 'Testing String';
       });
     }
   }
 
-  Widget _buildDropdownField(
-      {required String title, required List<String> options}) {
+  Widget _buildDropdownField({required String title, required List<String> options}) {
+    TextEditingController? controller;
+
+    if (_textControllers.containsKey(title)) {
+      controller = _textControllers[title];
+    }
+    else {
+      _textControllers[title] = controller = TextEditingController();
+    }
+    
+    Text makeTitle(String text) {
+      return Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
+
+    void onChangedHandler(String? value) {
+      if (value == null) {
+        return;
+      }
+
+      controller!.text = value;
+    }
+
+    List<DropdownMenuItem<String>> makeDropdownItems(List<String> values) {
+      return options.map(
+        (option) => DropdownMenuItem(
+          value: option,
+          child: Text(option),
+        ),
+      ).toList();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        makeTitle(title),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          items: options
-              .map(
-                (option) => DropdownMenuItem(
-                  value: option,
-                  child: Text(option),
-                ),
-              )
-              .toList(),
-          onChanged: (value) {},
+          items: makeDropdownItems(options),
+          value: options[0],
+          onChanged: onChangedHandler,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
